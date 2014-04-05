@@ -46,6 +46,8 @@ if [ "$1" = "config" ]; then
 
     for dev in $ssds; do
         echo "${dev}.label $dev"
+        echo "${dev}.warning 10:"
+        echo "${dev}.critical 20:"
         echo "${dev}.type GAUGE"
     done
     exit 0
