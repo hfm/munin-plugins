@@ -17,6 +17,7 @@
 LANG=C
 export PATH=$PATH:/sbin:/usr/sbin:/usr/local/bin:/usr/local/sbin
 
+# Defaulh threshold
 warning="1:"
 critical="1:"
 
