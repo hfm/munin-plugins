@@ -1,0 +1,63 @@
+#!/bin/bash
+#
+# ## Plugin for Munin to monitor current pending sectors
+# Author: Okumura Takahiro <hfm.garden@gmail.com>
+#
+# ## Description:
+#
+# This plugin uses smartctl command to get the number of current pending sectors (S.M.A.R.T ID:197).
+#
+# sample conf
+# [pending_sector]
+# user root
+#
+#%# family=auto
+#%# capabilities=autoconf
+
+LANG=C
+export PATH=$PATH:/sbin:/usr/sbin:/usr/local/bin:/usr/local/sbin
+
+# Defaulh threshold
+warning="1:"
+critical="1:"
+
+smartctl=$(which smartctl)
+if [ "$1" = "autoconf" ]; then
+    if [ -x "$smartctl" ]; then
+        echo yes
+        exit 0
+    else
+        echo "no (smartctl is not exist.)"
+        exit 1
+    fi
+fi
+
+# get device list like (sda sda1 sda2 sdb ...)
+devices=$(awk '$4 ~ /^\wd\w+$/ {print $4}' /proc/partitions)
+
+ssds=""
+for dev in $devices; do
+    $smartctl -A /dev/$dev -d auto | grep -q '^  5 ' || continue
+    ssds="$ssds $dev"
+done
+
+if [ "$1" = "config" ]; then
+    echo 'graph_title Current_Pending_Sector'
+    echo 'graph_args --alt-y-grid --base 1000 -l 0'
+    echo 'graph_vlabel the number'
+    echo 'graph_category disk'
+    echo 'graph_info This graph shows Current_Pending_Sector (SMART ID:197).'
+
+    for dev in $ssds; do
+        echo "${dev}.label $dev"
+        echo "${dev}.warning $warning"
+        echo "${dev}.critical $critical"
+        echo "${dev}.type GAUGE"
+    done
+    exit 0
+fi
+
+for dev in $ssds; do
+    echo -n "${dev}.value "
+    smartctl -A /dev/$dev -d auto | awk '$1==197 {print $NF}'
+done
