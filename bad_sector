@@ -17,6 +17,9 @@
 LANG=C
 export PATH=$PATH:/sbin:/usr/sbin:/usr/local/bin:/usr/local/sbin
 
+warning="10:"
+critical="20:"
+
 smartctl=$(which smartctl)
 if [ "$1" = "autoconf" ]; then
     if [ -x "$smartctl" ]; then
@@ -46,8 +49,8 @@ if [ "$1" = "config" ]; then
 
     for dev in $ssds; do
         echo "${dev}.label $dev"
-        echo "${dev}.warning 10:"
-        echo "${dev}.critical 20:"
+        echo "${dev}.warning $warning"
+        echo "${dev}.critical $critical"
         echo "${dev}.type GAUGE"
     done
     exit 0
