@@ -33,12 +33,12 @@ if [ "$1" = "autoconf" ]; then
 fi
 
 # get device list like (sda sda1 sda2 sdb ...)
-devices=$(awk '$4 ~ /^\wd\w+$/ {print $4}' /proc/partitions)
+partitions=$(awk '$4 ~ /^\wd\w+$/ {print $4}' /proc/partitions)
 
-ssds=""
-for dev in $devices; do
-    $smartctl -A /dev/$dev -d auto | grep -q '^  5 ' || continue
-    ssds="$ssds $dev"
+devs=""
+for part in $partitions; do
+    $smartctl -A /dev/$part -d auto | grep -q '^  5 ' || continue
+    devs="$devs $part"
 done
 
 if [ "$1" = "config" ]; then
@@ -48,7 +48,7 @@ if [ "$1" = "config" ]; then
     echo 'graph_category disk'
     echo 'graph_info This graph shows Reallocated_Sector_Ct (SMART ID:5).'
 
-    for dev in $ssds; do
+    for dev in $devs; do
         echo "${dev}.label $dev"
         echo "${dev}.warning $warning"
         echo "${dev}.critical $critical"
@@ -57,7 +57,7 @@ if [ "$1" = "config" ]; then
     exit 0
 fi
 
-for dev in $ssds; do
+for dev in $devs; do
     echo -n "${dev}.value "
     smartctl -A /dev/$dev -d auto | awk '$1==5 {print $NF}'
 done
