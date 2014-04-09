@@ -33,7 +33,7 @@ if [ "$1" = "autoconf" ]; then
 fi
 
 # get device list like (sda sda1 sda2 sdb ...)
-partitions=$(awk '$4 ~ /^\wd\w+$/ {print $4}' /proc/partitions)
+partitions=$(awk '$4 ~ /^[a-z]d[a-z]+$/ {print $4}' /proc/partitions)
 
 devs=""
 for part in $partitions; do
