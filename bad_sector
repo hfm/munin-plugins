@@ -18,8 +18,8 @@ LANG=C
 export PATH=$PATH:/sbin:/usr/sbin:/usr/local/bin:/usr/local/sbin
 
 # Defaulh threshold
-warning="10:"
-critical="20:"
+warning=":10"
+critical=":20"
 
 smartctl=$(which smartctl)
 if [ "$1" = "autoconf" ]; then
