@@ -42,7 +42,7 @@ for part in $partitions; do
 done
 
 if [ "$1" = "config" ]; then
-    echo 'graph_title Current_Pending_Sector'
+    echo 'graph_title SMART_Current_Pending_Sector'
     echo 'graph_args --alt-y-grid --base 1000 -l 0'
     echo 'graph_vlabel the number'
     echo 'graph_category disk'
